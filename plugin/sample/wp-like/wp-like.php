@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: WP Like This
+Plugin Name: WP Digg This
 Version: 0.1
-Desciption:Automatically adds the like this button to your posts.
+Desciption:Automatically adds the Digg this button to your posts.
 Author: Nilutpal Borgohain
 Author URI:
 Plugin URI:
