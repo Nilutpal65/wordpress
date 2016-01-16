@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Opening Merchant</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        (function($) {
+            $(function () {
+                var o = window.opener ? window.opener.window : {};
+                var tmp = document.location.hash.substr(1).split('|');
+                var intitem = tmp[0] && parseInt(tmp[0]) ? parseInt(tmp[0]) : 0;
+                var searchbox = tmp[1] ? tmp[1] : '';
+                var frm = searchbox && o.document ? $("#" + searchbox, o.document).find("form.sel") : $();
+                var mrcBttn = frm.find('.mrcList span.mSel').filter('[rel=' + intitem + ']');
+                var merchant = mrcBttn.attr('title');
+                var logo = mrcBttn.length ? mrcBttn.children('img').attr('src').match(/\/([^\/]+)$/i)[1] : 'white.png';
+                var redirectLink = o.TGSB && o.TGSB.getJumpLink ? o.TGSB.getJumpLink(mrcBttn, merchant, intitem) : '';
+
+                $(window).bind('close unload beforeunload', function () {
+                    if (o.TGSB) {
+                        /* we have to use the local jQuery instance */
+                        o.TGSB.$(mrcBttn.get(0)).trigger('uncheck');
+                    }
+                });
+                var inp = frm.find("input, select");
+                var from = inp.filter("[name='inp_dep_arp_cd_1'], [name='airport'], [name='city1'], [name='where']").val();
+                var to = inp.filter("[name='inp_arr_arp_cd_1'], [name='arr'], [name='cr_drp_off_cty_name']").val();
+                var depdate = inp.filter("[name='dep_date'], [name='start_date']").val();
+                var retdate = inp.filter("[name='arr_date'], [name='end_date']").val();
+                var adults = parseInt(inp.filter("[name='inp_adult_pax_cnt'], [name='adults']").val());
+                var children = parseInt(inp.filter("[name='inp_child_pax_cnt'], [name='no_child'], [name='childrens']").val());
+                var seniors = parseInt(inp.filter("[name='inp_senior_pax_cnt'], [name='seniors']").val());
+                var travelers = (isNaN(adults) ? 0 : adults) + (isNaN(children) ? 0 : children) + (isNaN(seniors) ? 0 : seniors);
+                travelers = travelers ? travelers + ' ' + (travelers > 1 ? "travelers" : "traveler") : false;
+                var $b = $("body");
+                $b.find('.logo').prop('src', 'http://www.travelgrove.com/images/merchants/' + logo).attr('alt', merchant);
+                $b.find('.from').text(from);
+                if (to) {
+                    $b.find('.to-det').show();
+                    $b.find('.to').text(to);
+                }
+                $b.find('.depDate').text(depdate);
+                if (retdate) {
+                    $b.find('.ow').show();
+                    $b.find('.retDate').text(retdate);
+                }
+                if (travelers) {
+                    $b.find('.travelers-cont').show();
+                    $b.find('.travelers').text(travelers);
+                }
+                $b.find('.bttm p strong').text(merchant);
+                var $s = $b.find('.bttm .src_bttn');
+                if (!redirectLink) {
+                    $s.hide();
+                } else {
+                    $s.click(function () {
+                        window.location.replace(redirectLink);
+                    });
+                }
+            });
+        })(jQuery);
+    </script>
+    <style type="text/css">
+        body{
+            background:#ccc;
+            background: -ms-linear-gradient(top, #ccc 0%,#ffffff 100%);
+            background: linear-gradient(to bottom, #ccc 0%,#ffffff 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#ccc", endColorstr="#ffffff",GradientType=0 );
+        }
+        h3.tg_div img{
+            margin-top:10px
+        }
+        .cont{
+            width:453px;
+            position:relative;
+            background:#fff;
+            border-radius:5px;
+            border:1px solid #ADD8E6;
+            margin:0 auto;
+            text-align:center
+        }
+        .cont img{
+            margin:10px auto
+        }
+        .middle{
+            text-align:center;
+            font-size:13px;
+            color:#555
+        }
+        .middle strong{
+            font-size:17px
+        }
+        .middle img{
+            margin:20px 0 15px
+        }
+        hr{
+            border:none;
+            font-size:0;
+            height:1px;
+            background:#ADD8E6;
+            margin:20px
+        }
+        .bttm{
+            padding:0 20px 20px
+        }
+        h3{
+            color:#f63;
+            text-align:center;
+            margin:0 0 20px;
+            padding:0
+        }
+        a{
+            color:#000
+        }
+        .bttm p{
+            font-size:13px;
+            text-align:justify;
+            margin:0 0 20px
+        }
+        div.cnt{
+            text-align:center
+        }
+        span.src_bttn{
+            background:#f63;
+            border-radius:5px;
+            margin-top:0;
+            display:inline-block;
+            padding:10px 15px;
+            font-weight:700;
+            cursor:pointer;
+            color:#fff
+        }
+        .to-det,
+        .travelers-cont,
+        .ow{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+<div class="cont">
+    <div>
+        <img src="" alt="" class='logo'>
+        <br>
+        <div class="middle">
+            <strong>You are checking rates on:</strong>
+            <div class="details">
+                <span class="from">departure</span><span class='to-det'> to <span class='to'>destination</span></span>
+                <br>
+                <span class="depDate">departure date</span><span class="ow"> - <span class="retDate">return date</span></span><span class='travelers-cont'>, <span class="travelers">0 travelers</span></span>
+            </div>
+            <hr>
+        </div>
+        <div class="bttm">
+            <h3>Find the best fares now!</h3>
+            <p>Get the lowest price from <strong>Travelgrove</strong> by clicking on the search button or return to the search box and select more sites to compare.</p>
+            <div class="cnt">
+                <span class="src_bttn">Compare</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
